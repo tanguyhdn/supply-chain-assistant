@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: int_shipment_performance
+    description: >
+      Enrichissement des expéditions avec catégorisation des retards,
+      ratios de coût fret et classement d'urgence par mode de transport.
+    columns:
+      - name: shipment_id
+        tests:
+          - unique
+          - not_null
+      - name: delay_category
+        description: "Catégorie de retard calculée à partir de delivery_delay_days"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                - 'On Time or Early'
+                - 'Minor Delay (1-14d)'
+                - 'Moderate Delay (15-30d)'
+                - 'Major Delay (30d+)'

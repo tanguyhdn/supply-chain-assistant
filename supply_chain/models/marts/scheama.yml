@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: fct_deliveries
+    description: >
+      Table de faits principale exposant les métriques de performance
+      logistique par livraison. Source principale du LLM Analytics
+      Assistant pour les requêtes en langage naturel.
+      Grain : 1 ligne = 1 livraison.
+    columns:
+      - name: shipment_id
+        tests:
+          - unique
+          - not_null
+      - name: country
+        tests:
+          - not_null
+      - name: product_group
+        tests:
+          - not_null
+      - name: delay_category
+        tests:
+          - not_null
+
+  - name: agg_kpis_by_country_product
+    description: >
+      KPIs agrégés par pays, groupe de produits et année.
+      Conçu pour répondre rapidement aux questions analytiques
+      en langage naturel via le LLM Assistant.
+    columns:
+      - name: country
+        tests:
+          - not_null
+      - name: product_group
+        tests:
+          - not_null
+      - name: po_year
+      - name: on_time_delivery_rate_pct
+        description: "Pourcentage de livraisons dans les délais (0-100)"
+      - name: avg_lead_time_days
+        description: "Délai moyen en jours entre PO et livraison réelle"

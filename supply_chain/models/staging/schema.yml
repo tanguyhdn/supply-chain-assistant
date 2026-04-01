@@ -1,0 +1,46 @@
+version: 2
+
+sources:
+  - name: supply_chain
+    description: "Dataset brut USAID SCMS Delivery History chargé via dbt seed"
+    tables:
+      - name: scms_deliveries
+        description: >
+          10 324 lignes de livraisons de produits médicaux humanitaires.
+          Source : USAID Supply Chain Management System (SCMS).
+        columns:
+          - name: id
+            description: Identifiant unique de la livraison
+            tests:
+              - unique
+              - not_null
+          - name: country
+            tests:
+              - not_null
+          - name: product_group
+            tests:
+              - not_null
+
+models:
+  - name: stg_scms_deliveries
+    description: >
+      Staging du dataset USAID SCMS. Nettoyage des types, cast safe des
+      colonnes numériques, calcul des délais et du landed cost.
+      Grain : 1 ligne = 1 ligne de bon de commande.
+    columns:
+      - name: shipment_id
+        tests:
+          - unique
+          - not_null
+      - name: lead_time_days
+        description: Nombre de jours entre le PO et la livraison réelle
+      - name: is_late_delivery
+        description: "true si livraison après la date planifiée"
+        tests:
+          - not_null
+      - name: country
+        tests:
+          - not_null
+      - name: product_group
+        tests:
+          - not_null
