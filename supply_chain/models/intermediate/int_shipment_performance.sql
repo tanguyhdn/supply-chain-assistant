@@ -54,8 +54,8 @@ performance as (
         case shipment_mode
             when 'Air Charter' then 1
             when 'Air'         then 2
-            when 'Road'        then 3
-            when 'Sea'         then 4
+            when 'Truck'        then 3
+            when 'Ocean'         then 4
             else 5
         end                                          as urgency_rank
 

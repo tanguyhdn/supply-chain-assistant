@@ -5,7 +5,7 @@ with source as (
 cleaned as (
     select
         -- Identifiants
-        id                                                          as shipment_id,
+        id                                                              as shipment_id,
         project_code,
         pq_number,
         po_so_number,
@@ -18,25 +18,25 @@ cleaned as (
         vendor_inco_term,
         shipment_mode,
 
-        -- Dates (format DD-Mon-YY ex: 18-Dec-06)
-        safe.parse_date('%d-%b-%y', pq_first_sent_to_client_date)  as pq_sent_date,
-        safe.parse_date('%d-%b-%y', po_sent_to_vendor_date)        as po_date,
-        safe.parse_date('%d-%b-%y', scheduled_delivery_date)       as scheduled_delivery_date,
-        safe.parse_date('%d-%b-%y', delivered_to_client_date)      as actual_delivery_date,
-        safe.parse_date('%d-%b-%y', delivery_recorded_date)        as recorded_date,
+        -- Dates (formats mixtes selon la colonne)
+        safe.parse_date('%m/%d/%y', pq_first_sent_to_client_date)      as pq_sent_date,
+        safe.parse_date('%m/%d/%y', po_sent_to_vendor_date)            as po_date,
+        safe.parse_date('%d-%b-%y', scheduled_delivery_date)           as scheduled_delivery_date,
+        safe.parse_date('%d-%b-%y', delivered_to_client_date)          as actual_delivery_date,
+        safe.parse_date('%d-%b-%y', delivery_recorded_date)            as recorded_date,
 
         -- Délais calculés
         date_diff(
             safe.parse_date('%d-%b-%y', delivered_to_client_date),
-            safe.parse_date('%d-%b-%y', po_sent_to_vendor_date),
+            safe.parse_date('%m/%d/%y', po_sent_to_vendor_date),
             day
-        )                                                           as lead_time_days,
+        )                                                               as lead_time_days,
 
         date_diff(
             safe.parse_date('%d-%b-%y', delivered_to_client_date),
             safe.parse_date('%d-%b-%y', scheduled_delivery_date),
             day
-        )                                                           as delivery_delay_days,
+        )                                                               as delivery_delay_days,
 
         -- Flag retard
         case
@@ -44,7 +44,7 @@ cleaned as (
                  > safe.parse_date('%d-%b-%y', scheduled_delivery_date)
             then true
             else false
-        end                                                         as is_late_delivery,
+        end                                                             as is_late_delivery,
 
         -- Produit
         product_group,
@@ -60,24 +60,24 @@ cleaned as (
         first_line_designation,
 
         -- Colonnes numériques — cast safe pour les valeurs texte
-        cast(nullif(trim(line_item_quantity), '') as integer)       as quantity,
-        safe_cast(line_item_value as float64)                       as line_value_usd,
-        safe_cast(pack_price as float64)                            as pack_price_usd,
-        safe_cast(unit_price as float64)                            as unit_price_usd,
-        safe_cast(weight_kilograms as float64)                      as weight_kg,
-        safe_cast(freight_cost_usd as float64)                      as freight_cost_usd,
-        safe_cast(line_item_insurance_usd as float64)               as insurance_usd,
+        cast(nullif(trim(line_item_quantity), '') as integer)           as quantity,
+        safe_cast(line_item_value as float64)                           as line_value_usd,
+        safe_cast(pack_price as float64)                                as pack_price_usd,
+        safe_cast(unit_price as float64)                                as unit_price_usd,
+        safe_cast(weight_kilograms as float64)                          as weight_kg,
+        safe_cast(freight_cost_usd as float64)                          as freight_cost_usd,
+        safe_cast(line_item_insurance_usd as float64)                   as insurance_usd,
 
         -- Landed cost total
         round(
             coalesce(safe_cast(line_item_value as float64), 0)
             + coalesce(safe_cast(freight_cost_usd as float64), 0)
             + coalesce(safe_cast(line_item_insurance_usd as float64), 0),
-        2)                                                          as total_landed_cost_usd,
+        2)                                                              as total_landed_cost_usd,
 
         -- Dimensions temporelles
-        extract(year from safe.parse_date('%d-%b-%y', po_sent_to_vendor_date))  as po_year,
-        extract(month from safe.parse_date('%d-%b-%y', po_sent_to_vendor_date)) as po_month
+        extract(year from safe.parse_date('%m/%d/%y', po_sent_to_vendor_date))  as po_year,
+        extract(month from safe.parse_date('%m/%d/%y', po_sent_to_vendor_date)) as po_month
 
     from source
     where id is not null
