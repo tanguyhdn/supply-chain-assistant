@@ -16,10 +16,10 @@ st.caption("Interrogez les données de livraisons humanitaires en langage nature
 with st.expander("💡 Exemples de questions"):
     st.markdown("""
     - Quel pays a le taux de livraison à temps le plus faible ?
-    - Quelle est la valeur totale des livraisons par programme (PEPFAR, PMI) ?
+    - Quelle est la valeur totale des livraisons par pays ?
     - Quel mode de transport génère le plus de retards majeurs ?
-    - Quels sont les 5 fournisseurs avec le lead time moyen le plus court ?
-    - Comparer le coût fret moyen entre Air et Sea pour les produits ARV
+    - Quels sont les 5 fournisseurs avec le lead time moyen le plus court (minimum 10 livraisons) ?
+    - Comparer le coût fret moyen entre Air et Ocean pour les produits ARV
     - Quelle est l'évolution du nombre de livraisons par année ?
     """)
 
