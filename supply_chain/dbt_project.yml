@@ -23,3 +23,19 @@ models:
     marts:
       +materialized: table
       +schema: marts
+
+seeds:
+  supply_chain:
+    scms_deliveries:
+      +column_types:
+        id: string
+        pq_number: string
+        po_so_number: string
+        asn_dn_number: string
+        line_item_quantity: string
+        line_item_value: string
+        pack_price: string
+        unit_price: string
+        weight_kilograms: string
+        freight_cost_usd: string
+        line_item_insurance_usd: string
