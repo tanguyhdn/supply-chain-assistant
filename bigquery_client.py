@@ -5,8 +5,8 @@ import pandas as pd
 
 
 def get_bq_client():
-    credentials = service_account.Credentials.from_service_account_file(
-        st.secrets.get("GCP_KEY_PATH", "secrets/gcp-key.json")
+    credentials = service_account.Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"]
     )
     return bigquery.Client(
         credentials=credentials,
